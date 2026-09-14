@@ -61,10 +61,15 @@ you only want movement; add wand positions later any time by running
 `python3 calibrate.py --wands-only` (keeps your existing board calibration).
 
 Everything is stored as a fraction of the window, not a fixed pixel, so
-moving the window needs no recalibration at all. Resizing usually doesn't
-either, as long as the game's own layout scales proportionally with it --
-only redo calibration if things visibly stop lining up after a resize (a
-different zoom level, say). From the dashboard, press **Ctrl+R** to
+moving or resizing the window needs no recalibration at all -- Cinco Paus
+only resizes in integer steps (the whole board scales together, same
+proportions every time), so a fraction captured at one size is still
+correct at any other. This is true even if the game always launches at the
+same small default size and you resize it every time (e.g. on Windows,
+which doesn't remember window size between launches) -- that's a normal
+case this already handles. Only a manually deformed (non-proportional)
+window shape could throw it off, and even then the shipped default will
+often still be close. From the dashboard, press **Ctrl+R** to
 recalibrate in-place instead of quitting and running `calibrate.py` by
 hand -- it's a modifier combo rather than a button or a plain key on
 purpose, since it suspends the whole dashboard and shells out, and that
@@ -87,10 +92,16 @@ Both listening for global hotkeys and injecting mouse events require OS
 input-monitoring permission for whatever runs `python3` (usually your
 terminal app):
 
-- **macOS**: System Settings -> Privacy & Security -> Accessibility, and
-  also Input Monitoring. Add your terminal app, then restart it -- like any
+- **macOS**: required, two separate grants -- System Settings -> Privacy &
+  Security -> **Accessibility** (scroll to find it in that list, then hit
+  **+** to add your terminal app; see `../media/accessibility-settings.png`
+  for exactly where that is) -> and separately, the same for **Input
+  Monitoring**. Then fully quit and reopen that terminal app -- like any
   such permission on macOS, it only takes effect for processes launched
-  *after* it's granted. `controller.check_accessibility_or_die()` (called
+  *after* it's granted, not ones already running. Input Monitoring usually
+  triggers an automatic system popup the first time you run this; nothing
+  prompts for Accessibility automatically, which is exactly why it's the
+  one people forget. `controller.check_accessibility_or_die()` (called
   from both `controller.py` and `dashboard.py`, skipped under `--dry-run`)
   checks `ApplicationServices.AXIsProcessTrusted()` before doing anything
   else, specifically because a missing Accessibility grant is otherwise a

@@ -30,20 +30,25 @@ Also on [YouTube](https://youtu.be/ndgm-qDXB3I).
 2. A default screen calibration (`core/config.json`) ships in this repo, so
    there's a decent chance movement/casting already line up for you with no
    extra step -- try it first. It's stored as *fractions of the game
-   window*, not fixed pixels, which is why it can travel between machines
-   at all; it just won't survive a window with a different aspect ratio
-   than it was captured at. If wands/movement look aimed at the wrong spot,
-   recalibrate for your own window -- either press **Ctrl+R** in the
-   running dashboard (suspends it and runs calibration in-place, no need to
-   quit -- deliberately a modifier combo and not a button or plain key,
-   since it's disruptive enough that it shouldn't trigger by accident), or
-   run it directly:
+   window*, not fixed pixels, so **moving or resizing the window is not a
+   problem** -- Cinco Paus only resizes in integer steps (the whole board
+   scales up/down together, same proportions), so a fraction captured at
+   one size stays correct at any other. This holds even if the game always
+   launches at the same small default size and you resize it every time
+   (e.g. on Windows, which doesn't remember window size between launches) --
+   that's a completely normal case this handles fine, not something that
+   needs special care. Only a manually *deformed* window (dragged to some
+   odd non-proportional shape) could throw it off, and even then the
+   default calibration will often still be close enough. If wands/movement
+   ever do look aimed at the wrong spot, recalibrate once for your setup --
+   either press **Ctrl+R** in the running dashboard (suspends it and runs
+   calibration in-place, no need to quit -- deliberately a modifier combo
+   and not a button or plain key, since it's disruptive enough that it
+   shouldn't trigger by accident), or run it directly:
    ```
    core/venv/bin/python3 core/calibrate.py --wands
    ```
-   (`core\venv\Scripts\python.exe` on Windows). Redo this any time you
-   resize the game window -- moving it is fine, resizing isn't guaranteed
-   to still line up.
+   (`core\venv\Scripts\python.exe` on Windows).
 
 3. Run the play file again -- you now have a dashboard showing what it's
    doing, with arrow keys/WASD to move and 1-5/zxcvb to cast wands, only
@@ -78,16 +83,26 @@ Also on [YouTube](https://youtu.be/ndgm-qDXB3I).
 Both global-hotkey listening and synthetic mouse events need OS
 input-monitoring permission for whatever runs Python (usually your
 terminal app):
-- **macOS**: System Settings -> Privacy & Security -> both Accessibility
-  and Input Monitoring. Add your terminal app, then restart it -- macOS
-  permissions only apply to processes launched *after* they're granted.
-  Missing Input Monitoring means keys never reach the app at all (nothing
-  gets logged when you press one). Missing Accessibility is sneakier: keys
-  *do* get detected and logged, but every click/drag it tries to make is
-  silently dropped by the OS -- no error, mouse just never moves. The app
-  checks for this on startup and stops with a clear message rather than
-  running uselessly, but if you ever see logged actions with no on-screen
-  effect anyway, check Accessibility specifically.
+- **macOS**: this is a **required, two-part step**, not optional --
+  System Settings -> Privacy & Security -> scroll down to find
+  **Accessibility** in that list (it's easy to miss among all the other
+  entries there) -> click the **+** button -> add your terminal app.
+  Separately, also do the same for **Input Monitoring**. Then fully quit
+  and reopen that terminal app -- macOS permissions only apply to processes
+  launched *after* they're granted, not ones already running.
+
+  <img src="media/accessibility-settings.png" width="500" alt="Privacy & Security > Accessibility, with the + button to add your terminal app">
+
+  Input Monitoring is usually requested automatically by a system popup
+  the first time you run this, so it's the one people remember granting.
+  Accessibility is the one that's easy to miss, since nothing prompts you
+  for it automatically -- and missing it is sneaky in a different way:
+  keys *do* get detected and logged normally, but every click/drag it
+  tries to make is silently dropped by the OS with no error at all, mouse
+  just never moves. The app checks for this on startup and stops with a
+  clear message rather than running uselessly, but if two people are
+  comparing notes and one says "it detects my keys but nothing happens,"
+  this is almost always it.
 - **Windows**: no permission dialog, but some anti-cheat/antivirus software
   flags synthetic input tools -- whitelist it if that happens.
 - **Linux**: works on X11. On **Wayland** (the default on many modern
