@@ -60,9 +60,12 @@ python3 controller.py
 you only want movement; add wand positions later any time by running
 `python3 calibrate.py --wands-only` (keeps your existing board calibration).
 
-Run `calibrate.py` again any time you move or resize the game window --
-it's calibrated to on-screen pixel positions, not anything that adapts
-automatically.
+Everything is stored as a fraction of the window, not a fixed pixel, so
+moving the window needs no recalibration at all. Resizing usually doesn't
+either, as long as the game's own layout scales proportionally with it --
+only redo calibration if things visibly stop lining up after a resize (a
+different zoom level, say). From the dashboard, press **C** to recalibrate
+in-place instead of quitting and running `calibrate.py` by hand.
 
 **Always try `--dry-run` first**: `python3 controller.py --dry-run` prints
 what it *would* click, without moving your mouse at all. Confirm the

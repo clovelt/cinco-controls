@@ -12,6 +12,9 @@ Dashboard controls (click or key, both work):
   M / click [ MANUAL CAST: ON/OFF ]  - toggle wand confirm-with-Enter mode
   A / click [ OPEN AUTOMANCIA ]      - open automancia in the browser
   W / click [ APP WINDOW ]           - open automancia in its own Chrome window
+  C / click [ RECALIBRATE ]          - suspend the dashboard and run
+                                        calibrate.py --wands in-place, no
+                                        need to quit and retype a command
 Game controls (arrows/WASD/ijkl, 1-5/zxcvb, Enter/Space) work globally,
 exactly like controller.py -- only while Cinco Paus itself is focused.
 """
@@ -175,6 +178,7 @@ QUIT_LABEL = " QUIT (Q) "
 TOGGLE_LABEL_FMT = " MANUAL CAST: {} (M) "
 AUTOMANCIA_LABEL = " OPEN AUTOMANCIA (A) "
 AUTOMANCIA_WINDOW_LABEL = " APP WINDOW (W) "
+CALIBRATE_LABEL = " RECALIBRATE (C) "
 
 
 class Dashboard:
@@ -239,7 +243,8 @@ class Dashboard:
         self.buttons = {}
         bx = 2
         ok, detail = self.automancia_status
-        button_defs = [(QUIT_LABEL, True), (TOGGLE_LABEL_FMT.format(manual), True)]
+        button_defs = [(QUIT_LABEL, True), (TOGGLE_LABEL_FMT.format(manual), True),
+                       (CALIBRATE_LABEL, True)]
         if ok:
             button_defs.append((AUTOMANCIA_LABEL, True))
             button_defs.append((AUTOMANCIA_WINDOW_LABEL, True))
@@ -306,6 +311,8 @@ class Dashboard:
             self.open_automancia()
         elif c == "w":
             self.open_automancia_window()
+        elif c == "c":
+            self.run_calibration()
 
     def handle_click(self, y, x):
         for label, (row, x0, x1) in self.buttons.items():
@@ -318,6 +325,8 @@ class Dashboard:
                     self.open_automancia()
                 elif label == AUTOMANCIA_WINDOW_LABEL:
                     self.open_automancia_window()
+                elif label == CALIBRATE_LABEL:
+                    self.run_calibration()
                 return
 
     def toggle_manual_cast(self):
@@ -348,6 +357,22 @@ class Dashboard:
         else:
             subprocess.Popen(["open", detail])
             self.log.write(f"Chrome not found, opened {detail} in browser")
+
+    def run_calibration(self):
+        # calibrate.py is a plain blocking terminal script (input()/print()),
+        # not curses-aware -- has to run with curses fully torn down first,
+        # not just drawn over, or the two fight over the same terminal.
+        curses.endwin()
+        import subprocess
+        try:
+            print("\n--- Recalibrating: calibrate.py --wands ---\n")
+            subprocess.call([sys.executable, os.path.join(HERE, "calibrate.py"), "--wands"])
+            input("\nDone -- press Enter to return to the dashboard...")
+        finally:
+            self.stdscr.clear()
+            curses.curs_set(0)
+            self.stdscr.refresh()
+        self.log.write("recalibrated (--wands)")
 
 
 def main():
