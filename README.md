@@ -10,9 +10,11 @@ support too (D-pad/stick to move, face buttons for wands).
 
 ## Demo
 
-<video src="media/Demo.mp4" controls width="100%"></video>
+[![Demo video](https://img.youtube.com/vi/ndgm-qDXB3I/maxresdefault.jpg)](https://youtu.be/ndgm-qDXB3I)
 
-*Video not playing? Watch it on YouTube instead: https://youtu.be/ndgm-qDXB3I*
+*(GitHub doesn't render local video files in a README, so this is a
+thumbnail link to YouTube. The raw clip is also in the repo at
+[media/Demo.mp4](media/Demo.mp4) if you'd rather download it directly.)*
 
 ## Quickstart
 
