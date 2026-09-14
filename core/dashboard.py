@@ -12,7 +12,7 @@ Dashboard controls (click or key, both work):
   M / click [ MANUAL CAST: ON/OFF ]  - toggle wand confirm-with-Enter mode
   A / click [ OPEN AUTOMANCIA ]      - open automancia in the browser
   W / click [ APP WINDOW ]           - open automancia in its own Chrome window
-  C / click [ RECALIBRATE ]          - suspend the dashboard and run
+  R / click [ RECALIBRATE ]          - suspend the dashboard and run
                                         calibrate.py --wands in-place, no
                                         need to quit and retype a command
 Game controls (arrows/WASD/ijkl, 1-5/zxcvb, Enter/Space) work globally,
@@ -178,7 +178,7 @@ QUIT_LABEL = " QUIT (Q) "
 TOGGLE_LABEL_FMT = " MANUAL CAST: {} (M) "
 AUTOMANCIA_LABEL = " OPEN AUTOMANCIA (A) "
 AUTOMANCIA_WINDOW_LABEL = " APP WINDOW (W) "
-CALIBRATE_LABEL = " RECALIBRATE (C) "
+CALIBRATE_LABEL = " RECALIBRATE (R) "
 
 
 class Dashboard:
@@ -251,8 +251,18 @@ class Dashboard:
         for label, on in button_defs:
             if not on:
                 continue
-            s.addstr(row, bx, label, curses.A_STANDOUT)
-            self.buttons[label] = (row, bx, bx + len(label))
+            # Wrap to a new row instead of overrunning the terminal width --
+            # addstr() raises if the string would extend past the last
+            # column, and a 5th button (RECALIBRATE) was enough to do that
+            # in an 80-column terminal, crashing the whole dashboard.
+            if bx > 2 and bx + len(label) > w - 1:
+                row += 1
+                bx = 2
+            try:
+                s.addstr(row, bx, label, curses.A_STANDOUT)
+                self.buttons[label] = (row, bx, bx + len(label))
+            except curses.error:
+                pass
             bx += len(label) + 2
         row += 2
 
@@ -311,7 +321,7 @@ class Dashboard:
             self.open_automancia()
         elif c == "w":
             self.open_automancia_window()
-        elif c == "c":
+        elif c == "r":
             self.run_calibration()
 
     def handle_click(self, y, x):
