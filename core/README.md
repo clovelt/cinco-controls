@@ -15,7 +15,9 @@ and drags the mouse for you.
      preferences plist, under a key literally named `.monkeystate`. This is
      found automatically; nothing to configure.
 2. `calibrate.py` records where the 5x5 board (and, with `--wands`, the 5
-   wand icons) sit on your screen (run once).
+   wand icons) sit on your screen, as fractions of the window rather than
+   fixed pixels. A default (`config.json`) ships in this repo and may
+   already work for you -- run this only if it doesn't.
 3. `controller.py` only acts while Cinco Paus is the focused app (checked via
    `is_game_focused()`, macOS-only for now -- see Known Limitations), and
    listens for:

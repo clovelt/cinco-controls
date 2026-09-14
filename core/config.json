@@ -1,0 +1,13 @@
+{
+  "origin_frac": [0.187713623046875, 0.3467056796577947],
+  "step_frac": [0.15738423665364584, 0.1148964769486692],
+  "wand_positions_frac": [
+    [0.1574452718098958, 0.1544194094581749],
+    [0.3263702392578125, 0.1321849750475285],
+    [0.465057373046875, 0.1352260575095057],
+    [0.6331685384114584, 0.1426672409695817],
+    [0.799774169921875, 0.1479733543250951]
+  ],
+  "menu_point_frac": [0.500762939453125, 0.5310346364068441],
+  "_source": "imported from org.hammerspoon.Hammerspoon prefs (cincoPaus.* keys) -- reference window was 768x1052 at calibration time, but this is now window-relative so it doesn't matter"
+}
