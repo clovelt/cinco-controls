@@ -1,4 +1,4 @@
-# cinco-controls
+![Cinco Controls](media/header.png)
 
 Keyboard movement AND wand casting for [Cinco Paus](https://mightyvision.itch.io/cinco-paus)
 (arrow keys / WASD, number keys / zxcvb for wands), on any build, on any OS.
@@ -8,12 +8,9 @@ is mouse-swipe-only, so this is externally simulating swipes rather than
 adding real keyboard support inside the game. Optional game controller
 support too (D-pad/stick to move, face buttons for wands).
 
-## Demo
-
 https://github.com/user-attachments/assets/55027343-bc48-48b9-9213-c95d85eab0df
 
-Also on [YouTube](https://youtu.be/ndgm-qDXB3I), or grab the raw clip
-directly: [media/Demo.mp4](media/Demo.mp4).
+Also on [YouTube](https://youtu.be/ndgm-qDXB3I).
 
 ## Quickstart
 
