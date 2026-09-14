@@ -12,9 +12,15 @@ Dashboard controls (click or key, both work):
   M / click [ MANUAL CAST: ON/OFF ]  - toggle wand confirm-with-Enter mode
   A / click [ OPEN AUTOMANCIA ]      - open automancia in the browser
   W / click [ APP WINDOW ]           - open automancia in its own Chrome window
-  R / click [ RECALIBRATE ]          - suspend the dashboard and run
+  Ctrl+R (no button, no plain key)   - suspend the dashboard and run
                                         calibrate.py --wands in-place, no
-                                        need to quit and retype a command
+                                        need to quit and retype a command.
+                                        Deliberately a modifier combo, not a
+                                        button or single letter: this is a
+                                        disruptive action (kills the display,
+                                        shells out, blocks on terminal input)
+                                        that shouldn't be one stray keystroke
+                                        or misclick away during actual play.
 Game controls (arrows/WASD/ijkl, 1-5/zxcvb, Enter/Space) work globally,
 exactly like controller.py -- only while Cinco Paus itself is focused.
 """
@@ -178,7 +184,6 @@ QUIT_LABEL = " QUIT (Q) "
 TOGGLE_LABEL_FMT = " MANUAL CAST: {} (M) "
 AUTOMANCIA_LABEL = " OPEN AUTOMANCIA (A) "
 AUTOMANCIA_WINDOW_LABEL = " APP WINDOW (W) "
-CALIBRATE_LABEL = " RECALIBRATE (R) "
 
 
 class Dashboard:
@@ -243,8 +248,7 @@ class Dashboard:
         self.buttons = {}
         bx = 2
         ok, detail = self.automancia_status
-        button_defs = [(QUIT_LABEL, True), (TOGGLE_LABEL_FMT.format(manual), True),
-                       (CALIBRATE_LABEL, True)]
+        button_defs = [(QUIT_LABEL, True), (TOGGLE_LABEL_FMT.format(manual), True)]
         if ok:
             button_defs.append((AUTOMANCIA_LABEL, True))
             button_defs.append((AUTOMANCIA_WINDOW_LABEL, True))
@@ -253,8 +257,8 @@ class Dashboard:
                 continue
             # Wrap to a new row instead of overrunning the terminal width --
             # addstr() raises if the string would extend past the last
-            # column, and a 5th button (RECALIBRATE) was enough to do that
-            # in an 80-column terminal, crashing the whole dashboard.
+            # column, which crashed the whole dashboard once this row had
+            # enough buttons to hit that in an 80-column terminal.
             if bx > 2 and bx + len(label) > w - 1:
                 row += 1
                 bx = 2
@@ -309,6 +313,16 @@ class Dashboard:
                 self.handle_click(my, mx)
             return
 
+        # Ctrl+R, checked as its own raw control code (18 = ord('r') & 0x1f)
+        # rather than a plain letter -- deliberately NOT a single keystroke
+        # and NOT a clickable button, since this suspends the dashboard and
+        # shells out to a separate blocking script. A modifier combo makes
+        # it very unlikely to trigger by accident mid-game; a plain letter
+        # would also risk collisions with the wand-cast keys (z/x/c/v/b).
+        if ch == (ord('r') & 0x1f):
+            self.run_calibration()
+            return
+
         try:
             c = chr(ch).lower()
         except ValueError:
@@ -321,8 +335,6 @@ class Dashboard:
             self.open_automancia()
         elif c == "w":
             self.open_automancia_window()
-        elif c == "r":
-            self.run_calibration()
 
     def handle_click(self, y, x):
         for label, (row, x0, x1) in self.buttons.items():
@@ -335,8 +347,6 @@ class Dashboard:
                     self.open_automancia()
                 elif label == AUTOMANCIA_WINDOW_LABEL:
                     self.open_automancia_window()
-                elif label == CALIBRATE_LABEL:
-                    self.run_calibration()
                 return
 
     def toggle_manual_cast(self):

@@ -64,8 +64,11 @@ Everything is stored as a fraction of the window, not a fixed pixel, so
 moving the window needs no recalibration at all. Resizing usually doesn't
 either, as long as the game's own layout scales proportionally with it --
 only redo calibration if things visibly stop lining up after a resize (a
-different zoom level, say). From the dashboard, press **R** to recalibrate
-in-place instead of quitting and running `calibrate.py` by hand.
+different zoom level, say). From the dashboard, press **Ctrl+R** to
+recalibrate in-place instead of quitting and running `calibrate.py` by
+hand -- it's a modifier combo rather than a button or a plain key on
+purpose, since it suspends the whole dashboard and shells out, and that
+shouldn't be one accidental keystroke or misclick away mid-run.
 
 **Always try `--dry-run` first**: `python3 controller.py --dry-run` prints
 what it *would* click, without moving your mouse at all. Confirm the
