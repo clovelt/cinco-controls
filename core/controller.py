@@ -58,6 +58,45 @@ def is_game_focused():
     return frontmost_bundle_id() in KNOWN_BUNDLE_IDS
 
 
+def is_accessibility_trusted():
+    """False specifically means _press_at/_release_at's CGEventPost calls
+    will silently do nothing -- no exception, no error printed, the mouse
+    just never moves -- because the process isn't Accessibility-trusted.
+    Reading the window list (frontmost_bundle_id/get_game_window_bounds)
+    needs no such permission, which is why focus detection can work fine
+    while every actual click/drag is a silent no-op. True on non-macOS
+    (no such gate there); None if pyobjc-framework-ApplicationServices
+    isn't installed, meaning this just can't be checked."""
+    if platform.system() != "Darwin":
+        return True
+    try:
+        from ApplicationServices import AXIsProcessTrusted
+    except ImportError:
+        return None
+    return bool(AXIsProcessTrusted())
+
+
+def check_accessibility_or_die():
+    """Call before starting any input handling. Without this, a missing
+    grant produces no error at all -- keys are detected, directions get
+    logged, and every click/drag is silently dropped by the OS -- which
+    reads exactly like a bug report ("it gets the keystrokes but nothing
+    happens"), not a permissions issue, unless it's caught explicitly."""
+    if is_accessibility_trusted() is False:
+        print(
+            "Accessibility permission not granted -- mouse clicks/drags will "
+            "silently do nothing (no crash, no error message) until this is "
+            "fixed.\n\n"
+            "Fix: System Settings -> Privacy & Security -> Accessibility -> "
+            "enable whatever runs this (Terminal/iTerm/etc, or Python itself), "
+            "then fully QUIT AND REOPEN that app -- not just the window. macOS "
+            "permissions only take effect for processes started *after* being "
+            "granted, so a permission added to an already-running terminal "
+            "does nothing until it's restarted."
+        )
+        sys.exit(1)
+
+
 def get_game_window_bounds():
     """(x, y, width, height) of Cinco Paus's window in screen coordinates,
     fetched fresh every call -- never cached -- so calibration stays
@@ -505,6 +544,9 @@ def main():
                          help="Print raw gamepad axis/button indices as you press "
                               "them, to help remap gamepad.py for your controller")
     args = parser.parse_args()
+
+    if not args.dry_run:
+        check_accessibility_or_die()  # --dry-run never touches the mouse, nothing to check
 
     source = find_source(args.game_dir)
     if not source:

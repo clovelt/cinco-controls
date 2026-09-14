@@ -90,7 +90,15 @@ terminal app):
 - **macOS**: System Settings -> Privacy & Security -> Accessibility, and
   also Input Monitoring. Add your terminal app, then restart it -- like any
   such permission on macOS, it only takes effect for processes launched
-  *after* it's granted.
+  *after* it's granted. `controller.check_accessibility_or_die()` (called
+  from both `controller.py` and `dashboard.py`, skipped under `--dry-run`)
+  checks `ApplicationServices.AXIsProcessTrusted()` before doing anything
+  else, specifically because a missing Accessibility grant is otherwise a
+  *silent* failure: `_press_at`/`_release_at`'s `CGEventPost` calls just do
+  nothing, no exception, while the rest of the pipeline (key detection,
+  direction logging) keeps working fine -- reading as a bug report ("it
+  gets the keystrokes but nothing happens") rather than a permissions gap,
+  unless it's caught explicitly like this.
 - **Windows**: no extra permission dialog, but some anti-cheat/anti-virus
   software flags synthetic input tools; whitelist it if that happens.
 - **Linux**: see the Wayland section below -- this is the platform with

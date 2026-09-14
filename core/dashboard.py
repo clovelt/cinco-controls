@@ -405,10 +405,14 @@ def main():
     args = parser.parse_args()
 
     # Anything that can legitimately exit early (missing save, missing
-    # config.json) must run BEFORE stdout gets redirected into the curses
-    # log buffer -- otherwise the error message is swallowed into a buffer
-    # nothing ever displays (curses never got a chance to start), and it
-    # looks like the app just silently does nothing.
+    # config.json, missing Accessibility permission) must run BEFORE stdout
+    # gets redirected into the curses log buffer -- otherwise the error
+    # message is swallowed into a buffer nothing ever displays (curses never
+    # got a chance to start), and it looks like the app just silently does
+    # nothing.
+    if not args.dry_run:
+        controller.check_accessibility_or_die()  # --dry-run never touches the mouse
+
     source = find_source(args.game_dir)
     if not source:
         print("No save source found. Pass --game-dir for a desktop build, or "

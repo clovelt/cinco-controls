@@ -81,6 +81,13 @@ terminal app):
 - **macOS**: System Settings -> Privacy & Security -> both Accessibility
   and Input Monitoring. Add your terminal app, then restart it -- macOS
   permissions only apply to processes launched *after* they're granted.
+  Missing Input Monitoring means keys never reach the app at all (nothing
+  gets logged when you press one). Missing Accessibility is sneakier: keys
+  *do* get detected and logged, but every click/drag it tries to make is
+  silently dropped by the OS -- no error, mouse just never moves. The app
+  checks for this on startup and stops with a clear message rather than
+  running uselessly, but if you ever see logged actions with no on-screen
+  effect anyway, check Accessibility specifically.
 - **Windows**: no permission dialog, but some anti-cheat/antivirus software
   flags synthetic input tools -- whitelist it if that happens.
 - **Linux**: works on X11. On **Wayland** (the default on many modern
