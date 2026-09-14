@@ -1,0 +1,8 @@
+pynput
+windows-curses; platform_system=="Windows"
+pygame
+# controller.py's window-focus/bounds detection and its explicit-position
+# mouse press/release fix (see the _press_at docstring) both need these on
+# macOS -- without them, focus checks silently degrade and _press_at raises.
+pyobjc-framework-Cocoa; platform_system=="Darwin"
+pyobjc-framework-Quartz; platform_system=="Darwin"
