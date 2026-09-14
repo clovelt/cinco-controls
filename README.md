@@ -8,6 +8,12 @@ is mouse-swipe-only, so this is externally simulating swipes rather than
 adding real keyboard support inside the game. Optional game controller
 support too (D-pad/stick to move, face buttons for wands).
 
+## Demo
+
+<video src="media/Demo.mp4" controls width="100%"></video>
+
+*Video not playing? Watch it on YouTube instead: https://youtu.be/ndgm-qDXB3I*
+
 ## Quickstart
 
 1. Double-click the play file for your OS:
