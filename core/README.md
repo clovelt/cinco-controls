@@ -16,8 +16,11 @@ and drags the mouse for you.
      found automatically; nothing to configure.
 2. `calibrate.py` records where the 5x5 board (and, with `--wands`, the 5
    wand icons) sit on your screen, as fractions of the window rather than
-   fixed pixels. A default (`config.json`) ships in this repo and may
-   already work for you -- run this only if it doesn't.
+   fixed pixels -- so it stays correct at any window size or position,
+   since Cinco Paus can only be resized in integer steps of the same
+   shape, never a different aspect ratio. A default (`config.json`)
+   already ships in this repo and works at any size for exactly that
+   reason; this is optional, not a setup step (see Setup below).
 3. `controller.py` only acts while Cinco Paus is the focused app (checked via
    `is_game_focused()`, macOS-only for now -- see Known Limitations), and
    listens for:
@@ -46,30 +49,30 @@ pip install -r requirements.txt
 
 ## Setup
 
+`config.json` already ships with a working calibration -- calibrate.py
+below is optional, not a required step (see why in the next paragraph):
+
 ```
 # Desktop build (itch.io) -- point at wherever you installed/extracted it:
-python3 calibrate.py --wands
 python3 controller.py --game-dir "/path/to/Cinco Paus"
 
 # App Store build (Apple Silicon Mac) -- no --game-dir needed:
-python3 calibrate.py --wands
 python3 controller.py
 ```
 
-`--wands` also asks you to hover over each of the 5 wand icons. Skip it if
-you only want movement; add wand positions later any time by running
-`python3 calibrate.py --wands-only` (keeps your existing board calibration).
-
-Everything is stored as a fraction of the window, not a fixed pixel, so
-moving or resizing the window needs no recalibration at all -- Cinco Paus
-only resizes in integer steps (the whole board scales together, same
-proportions every time), so a fraction captured at one size is still
-correct at any other. This is true even if the game always launches at the
-same small default size and you resize it every time (e.g. on Windows,
-which doesn't remember window size between launches) -- that's a normal
-case this already handles. Only a manually deformed (non-proportional)
-window shape could throw it off, and even then the shipped default will
-often still be close. From the dashboard, press **Ctrl+R** to
+Everything calibrate.py records is stored as a fraction of the window, not
+a fixed pixel, so moving or resizing the window needs no recalibration at
+all -- Cinco Paus doesn't support changing aspect ratio in the first place,
+only integer-scale resizing of the same shape, so a fraction captured at
+one size is still exactly correct at any other. This is true even if the
+game always launches at the same small default size and you resize it
+every time (e.g. on Windows, which doesn't remember window size between
+launches) -- that's a normal case this already handles, not an exception.
+The only way to defeat this is a third-party tool forcing the window into
+a shape the game itself doesn't support -- not a normal scenario. If you
+ever do want to redo it anyway (`--wands` also asks you to hover over each
+of the 5 wand icons; `--wands-only` redoes just those, keeping the existing
+board calibration), from the dashboard press **Ctrl+R** to
 recalibrate in-place instead of quitting and running `calibrate.py` by
 hand -- it's a modifier combo rather than a button or a plain key on
 purpose, since it suspends the whole dashboard and shells out, and that

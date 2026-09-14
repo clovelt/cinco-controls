@@ -27,34 +27,28 @@ Also on [YouTube](https://youtu.be/ndgm-qDXB3I).
    pre-installed yourself is Python 3 (the script tells you where to get it
    if it can't find one).
 
-2. A default screen calibration (`core/config.json`) ships in this repo, so
-   there's a decent chance movement/casting already line up for you with no
-   extra step -- try it first. It's stored as *fractions of the game
-   window*, not fixed pixels, so **moving or resizing the window is not a
-   problem** -- Cinco Paus only resizes in integer steps (the whole board
-   scales up/down together, same proportions), so a fraction captured at
-   one size stays correct at any other. This holds even if the game always
-   launches at the same small default size and you resize it every time
-   (e.g. on Windows, which doesn't remember window size between launches) --
-   that's a completely normal case this handles fine, not something that
-   needs special care. Only a manually *deformed* window (dragged to some
-   odd non-proportional shape) could throw it off, and even then the
-   default calibration will often still be close enough. If wands/movement
-   ever do look aimed at the wrong spot, recalibrate once for your setup --
-   either press **Ctrl+R** in the running dashboard (suspends it and runs
-   calibration in-place, no need to quit -- deliberately a modifier combo
-   and not a button or plain key, since it's disruptive enough that it
-   shouldn't trigger by accident), or run it directly:
-   ```
-   core/venv/bin/python3 core/calibrate.py --wands
-   ```
-   (`core\venv\Scripts\python.exe` on Windows).
+2. That's it -- the same run launches straight into a dashboard showing
+   what it's doing, with arrow keys/WASD to move and 1-5/zxcvb to cast
+   wands, only while Cinco Paus is the focused window. A working screen
+   calibration (`core/config.json`) already ships in this repo, and it'll
+   stay correct **no matter what size or position the game window is**:
+   Cinco Paus doesn't support changing aspect ratio at all -- window resizing
+   is always an integer scale of the same shape -- and calibration is
+   stored as a *fraction* of the window, not a fixed pixel, so it's exactly
+   as correct at any size. This is true even if the game always launches at
+   the same small default size and you resize it every single time (e.g. on
+   Windows, which doesn't remember window size between launches) -- that's
+   the normal case, not an exception. `--dry-run` prints what it *would*
+   click without touching your mouse, if you want to sanity-check first.
 
-3. Run the play file again -- you now have a dashboard showing what it's
-   doing, with arrow keys/WASD to move and 1-5/zxcvb to cast wands, only
-   while Cinco Paus is the focused window. `--dry-run` prints what it
-   *would* click without touching your mouse, if you want to sanity-check
-   first.
+   You should never need to run `calibrate.py` yourself. It exists for
+   completeness (and for anyone forking this for a differently-laid-out
+   game), not as a setup step -- but if you ever want to, press **Ctrl+R**
+   in the running dashboard (suspends it and runs calibration in-place, no
+   need to quit -- deliberately a modifier combo and not a button or plain
+   key, since it's disruptive enough that it shouldn't trigger by accident)
+   or run it directly: `core/venv/bin/python3 core/calibrate.py --wands`
+   (`core\venv\Scripts\python.exe` on Windows).
 
 ## How it works
 
