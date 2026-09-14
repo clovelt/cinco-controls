@@ -15,19 +15,19 @@ Also on [YouTube](https://youtu.be/ndgm-qDXB3I).
 ## Quickstart
 
 1. Double-click the play file for your OS:
-   - **macOS**: `play_mac.command` (first launch: right-click it and choose
-     "Open" once, since it's an unsigned script and Gatekeeper will
-     otherwise block it)
+   - **macOS**: `play_mac.command` (enable accesibility for Terminal.app
+      [see "Permissions" section below for more details], and on the first launch
+      right-click the file and choose "Open", since it's an unsigned script and
+      Gatekeeper will otherwise block it -- you can also unquarantine it)
    - **Windows**: `play_win.bat`
    - **Linux**: `play_linux.sh`
 
-   First run sets itself up automatically -- creates a private Python
-   environment in `core/venv` and installs everything into it. Every run
-   after that skips straight to launching. The only thing you need
-   pre-installed yourself is Python 3 (the script tells you where to get it
-   if it can't find one).
+   It should set itself up automatically, creates a private Python
+   environment in `core/venv` and installs everything into it.
+   The only thing you need pre-installed is Python 3 (the script
+   tells you where to get it if it can't find one).
 
-2. That's it -- the same run launches straight into a dashboard showing
+3. That's it -- it should launch straight into a dashboard showing
    what it's doing, with arrow keys/WASD to move and 1-5/zxcvb to cast
    wands, only while Cinco Paus is the focused window. A working screen
    calibration (`core/config.json`) already ships in this repo, and it'll
@@ -37,17 +37,12 @@ Also on [YouTube](https://youtu.be/ndgm-qDXB3I).
    stored as a *fraction* of the window, not a fixed pixel, so it's exactly
    as correct at any size. This is true even if the game always launches at
    the same small default size and you resize it every single time (e.g. on
-   Windows, which doesn't remember window size between launches) -- that's
-   the normal case, not an exception. `--dry-run` prints what it *would*
-   click without touching your mouse, if you want to sanity-check first.
+   Windows, which doesn't remember window size between launches).
 
-   You should never need to run `calibrate.py` yourself. It exists for
-   completeness (and for anyone forking this for a differently-laid-out
-   game), not as a setup step -- but if you ever want to, press **Ctrl+R**
-   in the running dashboard (suspends it and runs calibration in-place, no
-   need to quit -- deliberately a modifier combo and not a button or plain
-   key, since it's disruptive enough that it shouldn't trigger by accident)
-   or run it directly: `core/venv/bin/python3 core/calibrate.py --wands`
+   You should never need to run `calibrate.py` yourself, but if you ever want
+   to press **Ctrl+R** in the running dashboard (suspends it and runs
+   calibration in-place, no need to quit) or run it directly:
+   `core/venv/bin/python3 core/calibrate.py --wands`
    (`core\venv\Scripts\python.exe` on Windows).
 
 ## How it works
@@ -55,19 +50,14 @@ Also on [YouTube](https://youtu.be/ndgm-qDXB3I).
 - **Reading state**: on desktop builds it reads the plain `.monkeystate`
   save file next to the game; on the Apple Silicon App Store build (which
   never writes that file) it reads the same string out of that build's own
-  sandboxed preferences plist instead, automatically.
+  sandboxed preferences plist instead.
 - **Moving**: arrow keys / WASD swipe from a fixed anchor at the board's
-  center in that direction -- a directional gesture, not a drag to a
-  specific tile, so exact starting position doesn't matter.
+  center in that direction.
 - **Casting**: number keys / zxcvb pick up a wand (mouse-down on its icon);
   pressing the same slot again cancels it. While a wand is held, direction
-  keys aim and auto-release the cast instead of moving. This whole
-  pickup -> aim -> hold -> release gesture mirrors an existing
-  Hammerspoon-based build of the same idea that's already been validated
-  against the real game.
-- **Dying**: if `calibrate.py --menu-only` has a point recorded, losing a
-  run gets tapped through automatically (dismiss death screen, press start)
-  instead of just sitting idle.
+  keys aim and auto-release the cast instead of moving, unless manual casting
+  is enabled on the dashboard.
+- **Dying**: losing a run taps through automatically (death screen, menu)
 - **Gamepad** (optional, needs `pygame`, already in requirements.txt):
   D-pad or left stick for movement, 4 face buttons for wand slots 1-4, one
   shoulder button for slot 5, another to confirm a cast.
@@ -113,9 +103,6 @@ terminal app):
   again to cancel it.
 - Wall collisions aren't checked before moving -- worst case the game just
   doesn't move you, same as clicking an unreachable tile yourself.
-- Only verified end-to-end against the App Store build's live save; the
-  desktop-build (itch.io) save paths on Windows/Linux are a best guess, not
-  yet confirmed against a real install.
 
 `core/README.md` has the full technical reference (exact flags for every
 script, tuning constants like cast distance, and the Wayland/ydotool
@@ -131,7 +118,5 @@ optional -- movement and wand casting work with or without it.
 
 ## Credits
 
-Movement/casting design mirrors an existing Hammerspoon-based build of the
-same idea, already validated against the real game; this is a from-scratch,
-cross-platform (not just macOS, not tied to Hammerspoon) reimplementation.
-Had a bit of help from Claude building this out.
+Thanks to AurenSnyder for the inspiration, Cincomancia and Automancia!
+To personman on the Cinco Paus Discord for testing, and Michael of course!
