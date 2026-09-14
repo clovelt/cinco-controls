@@ -35,7 +35,7 @@ support too (D-pad/stick to move, face buttons for wands).
    window*, not fixed pixels, which is why it can travel between machines
    at all; it just won't survive a window with a different aspect ratio
    than it was captured at. If wands/movement look aimed at the wrong spot,
-   recalibrate for your own window -- either press **C** in the running
+   recalibrate for your own window -- either press **R** in the running
    dashboard (suspends it and runs calibration in-place, no need to quit),
    or run it directly:
    ```
